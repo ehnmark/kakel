@@ -1,0 +1,22 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+
+# Game
+GET		/						controllers.Game.index
+GET		/game/:id/:playerId		controllers.Game.data(id: Long, playerId: String)
+GET		/board/:id/:playerId	controllers.Game.board(id: Long, playerId: String)
+POST	/move/:id/:playerId 	controllers.Game.move(id: Long, playerId: String)
+GET		/is-word/:input			controllers.Game.isWord(input)
+GET		/sub/:id/:playerId		controllers.Game.subscribeWS(id: Long, playerId: String)
+
+# Admin
+GET		/admin					controllers.Admin.index
+POST	/admin/create			controllers.Admin.create
+POST	/admin/move 			controllers.Admin.move(id: Long)
+POST	/admin/delete			controllers.Admin.delete(id: Long)
+
+# Map static resources from the /public folder to the /assets URL path
+GET		/assets/*file			controllers.Assets.at(path="/public", file)

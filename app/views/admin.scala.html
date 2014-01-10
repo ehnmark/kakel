@@ -1,0 +1,70 @@
+@(games: Iterable[models.Game], createForm: Form[CreateGameRequest], moveForm: Form[String])
+
+@import helper._
+
+@main("Games") {
+    
+    <h1>@games.size item(s)</h1>
+    
+    <div class="games">
+        @games.map { game =>
+            <div class="game">
+                # @game (@game.getGameState)
+                <pre>
+@game.board
+                </pre>
+                <p>
+                    Play: 
+                        <a href="@routes.Game.board(game.id, game.players._1.id)">One</a>
+                        <a href="@routes.Game.board(game.id, game.players._2.id)">Two</a>
+                </p>
+
+                <h4>Moves</h4>
+                <ol>
+                @game.moves.map { move => 
+                    <li>@move</li>                
+                }
+                </ol>
+                <h4>States</h4>
+                <ol>
+                @game.getStates.map { state =>
+                    <li>@state</li>
+                }
+                </ol>
+                
+                <!--
+                @form(routes.Admin.delete(game.id)) {
+                    <input type="submit" value="Delete">
+                }
+                -->
+
+                @if(!game.getGameState.isGameOver) {
+
+                    @form(routes.Admin.move(game.id)) {
+                        
+                        @inputText(moveForm("pieceIds")) 
+                        
+                        <input type="submit" value="Move">
+                        
+                    }
+
+                }
+            </div>
+        }
+    </div>
+
+    <h2>New Game</h2>
+
+    @form(routes.Admin.create) {
+
+        @inputText(createForm("playerIdOne")) 
+
+        @inputText(createForm("playerIdTwo")) 
+
+        @inputText(createForm("size")) 
+        
+        <input type="submit" value="Create">
+        
+    }
+    
+}

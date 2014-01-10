@@ -1,0 +1,95 @@
+@(id: Long, playerId: String)(implicit request: RequestHeader)
+
+@main("Game %d (%s)".format(id, playerId)) {
+
+	<style>
+	h1 {
+		clear: both;
+	}
+	ul {
+		list-style-type: none;
+	}
+	ul.pieces {
+		width: 300px;
+	}
+	li {
+		display: inline;
+		float: left;
+	}
+	div.piece {
+		width: 50px;
+		height: 50px;
+		background-color: gray;
+		border: 1px solid black;
+		margin: 5px;
+		text-align: center;
+		font-size: 24px;
+		color: white;
+		line-height: 50px;
+	}
+	div.piece-theirs {
+		width: 50px;
+		height: 50px;
+		background-color: red;
+		border: 1px solid black;
+		margin: 5px;
+		text-align: center;
+		font-size: 24px;
+		color: white;
+		line-height: 50px;
+	}
+	div.piece-mine {
+		width: 50px;
+		height: 50px;
+		background-color: blue;
+		border: 1px solid black;
+		margin: 5px;
+		text-align: center;
+		font-size: 24px;
+		color: white;
+		line-height: 50px;
+	}
+	</style>
+	
+	<h1>All</h1>
+
+	<ul class="pieces" data-bind="foreach: pieces">
+		<li>
+			<div data-bind="text: display, click: $root.toggleSelected, css: pieceStyle"></div>
+		</li>
+	</ul>
+
+
+	<h1>Selected</h1>
+
+	<ul data-bind="foreach: selected">
+		<li>
+			<div data-bind="text: display, click: $root.toggleSelected, css: pieceStyle"></div>
+		</li>
+	</ul>
+
+	<h1>Buttons</h1>
+
+	<button class="btn btn-primary" data-bind="click: submitMove, enable: canSubmitMove">Submit move</button>
+
+	<script src="@routes.Assets.at("javascripts/board.knockout.js")" type="text/javascript"></script>
+	<script>
+		createViewModel(@id, "@playerId");
+	</script>
+
+	<script type="text/javascript">
+		var connection = new WebSocket('@routes.Game.subscribeWS(id, playerId).webSocketURL()');
+		connection.onopen = function () {
+			console.log("Connection opened");
+		};
+
+		connection.onerror = function (error) {
+			console.log('WS err ' + error);
+		};
+
+		connection.onmessage = function (e) {
+			console.log('WS reply: ' + e.data);
+			viewModel.reload();
+		};
+	</script>
+}
