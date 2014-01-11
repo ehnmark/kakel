@@ -47,11 +47,11 @@ function MainViewModel(gameId, playerId) {
 			type: "POST",
 			data: data,
 			contentType: "application/json; charset=utf-8",
-			success: function(reply) {
-				console.log("Got " + reply);
+			success: function(data, textStatus, xhr) {
+				$("#message").text(xhr.responseText);
 			},
 			error: function(xhr, textStatus, errorThrown) {
-				alert("error: " + textStatus + ", e: " + errorThrown)
+				$("#message").text(xhr.responseText);
 			}
 		});
 	}
