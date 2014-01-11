@@ -1,7 +1,5 @@
 package models
 
-import scala.util.Random
-
 sealed trait PieceState
 case class Taken(player: Player) extends PieceState {
 	override def toString = "T(%s)".format(player)
@@ -85,27 +83,10 @@ case class Game(id: Long, players: (Player, Player), board: Board, moves: List[M
 
 object Board {
 
-	def randomChar(r: Random) = (12353 + r.nextInt(83)).toChar
-	//def randomChar(r: Random) = (65 + r.nextInt(25)).toChar
-
-	def createPiece(r: Random, x: Int, y: Int) =
-		new Piece(randomChar(r), x, y)
-
-	def create(size: Int) = {
-		val r = new Random()
+	def create(size: Int, charSelector: () => Char) = {
 		new Board(size, (for {
 			y <- 0 until size
 			x <- 0 until size
-		} yield (x + y * size) -> createPiece(r, x, y)).toMap)
+		} yield (x + y * size) -> new Piece(charSelector(), x, y)).toMap)
 	}
-
-}
-
-object Game {
-
-	def create(id: Long, size: Int, playerIdOne: String, playerIdTwo: String) = {
-		val players = (new Player(playerIdOne), new Player(playerIdTwo))
-		new Game(id, players, Board.create(size), Nil)
-	}
-
 }

@@ -11,7 +11,7 @@ function PieceViewModel(piece, idx) {
 function MainViewModel(gameId, playerId) {
 	var self = this;
 
-	self.isMyTurn = false;
+	self.isMyTurn = ko.observable(false);
 	self.gameId = gameId;
 	self.playerId = playerId;
 	self.pieces = ko.observableArray([]);
@@ -24,7 +24,7 @@ function MainViewModel(gameId, playerId) {
 	}
 
 	self.toggleSelected = function(p) {
-		if(!self.isMyTurn) {
+		if(!self.isMyTurn()) {
 			console.log("Not my turn; cannot toggle");
 		} else {
 			if(self.selected.indexOf(p) < 0)
@@ -61,7 +61,7 @@ function MainViewModel(gameId, playerId) {
 		self.selected.removeAll();
 
 		$.getJSON("/game/" + gameId + "/" + playerId, function(data) {
-			self.isMyTurn = data.isMyTurn;
+			self.isMyTurn(data.isMyTurn);
 			i = 0;
 			data.pieces.forEach(function(p) {				
 				self.pieces.push(new PieceViewModel(p, i++));

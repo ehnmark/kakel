@@ -33,9 +33,10 @@ object Repository {
 		persistUpdate(moved)				
 	}
 
-	def create(size: Int, playerOneId: String, playerTwoId: String) = {
+	def create(size: Int, playerOneId: String, playerTwoId: String, charSelector: () => Char) = {
 		def getGameId = DB.withConnection { implicit conn => getNextVal("game_seq") }
-		val game = Game.create(getGameId, size, playerOneId, playerTwoId)
+		val players = (new Player(playerOneId), new Player(playerTwoId))
+		val game = new Game(getGameId, players, Board.create(size, charSelector), Nil)
 		persistNew(game)
 		game
 	}

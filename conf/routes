@@ -14,7 +14,6 @@ GET		/sub/:id/:playerId		controllers.Game.subscribeWS(id: Long, playerId: String
 
 # Admin
 GET		/admin					controllers.Admin.index
-POST	/admin/create			controllers.Admin.create
 POST	/admin/move 			controllers.Admin.move(id: Long)
 POST	/admin/delete			controllers.Admin.delete(id: Long)
 

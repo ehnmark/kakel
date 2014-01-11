@@ -70,7 +70,7 @@
 
 	<h1>Buttons</h1>
 
-	<button class="btn btn-primary" data-bind="click: submitMove, enable: canSubmitMove">Submit move</button>
+	<button class="btn btn-primary" data-bind="click: submitMove, visible: isMyTurn">Submit move</button>
 
 	<script src="@routes.Assets.at("javascripts/board.knockout.js")" type="text/javascript"></script>
 	<script>

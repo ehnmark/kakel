@@ -12,6 +12,7 @@ import utils.{Result, Failure, Success, WordListReader}
 object Game extends Controller {
 
 	lazy val words = WordListReader.readWordsFromEdictGzip("public/wordlists/edict2.gz")
+	lazy val chars = words.toList.flatten
 	
 	def isWord(input: String) = Action {
 		if (words.contains(input)) Ok("exists")
@@ -19,7 +20,19 @@ object Game extends Controller {
 	}
 
 	def index = Action {
-		val game = persistence.Repository.create(4, "one", "two")
+		import scala.util.Random
+		val boardSize = 4
+
+		def charSelector = {
+			val r = new Random()
+			var pos = r.nextInt(chars.size - (boardSize * boardSize))
+			() => {
+				pos +=1
+				chars(pos)
+			}
+		}
+
+		val game = persistence.Repository.create(boardSize, "one", "two", charSelector)
 		Redirect(routes.Game.board(game.id, "one"))
 	}
 

@@ -1,4 +1,4 @@
-@(games: Iterable[models.Game], createForm: Form[CreateGameRequest], moveForm: Form[String])
+@(games: Iterable[models.Game], moveForm: Form[String])
 
 @import helper._
 
@@ -51,20 +51,5 @@
                 }
             </div>
         }
-    </div>
-
-    <h2>New Game</h2>
-
-    @form(routes.Admin.create) {
-
-        @inputText(createForm("playerIdOne")) 
-
-        @inputText(createForm("playerIdTwo")) 
-
-        @inputText(createForm("size")) 
-        
-        <input type="submit" value="Create">
-        
-    }
-    
+    </div>    
 }
