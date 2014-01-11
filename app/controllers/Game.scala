@@ -61,10 +61,8 @@ object Game extends Controller {
 		}
 		def knownWord(game: models.Game, ids: List[Int]) = {
 			val word = game.getWord(ids)
-			val known = words.contains(word)
-			Logger.info(s"word is $word (${ids}) (known? $known)")
-			if (known) Success(word)
-			else Failure("Word not recognized")
+			if (words.contains(word)) Success(word)
+			else Failure(s"'$word' not recognized")
 		}
 		def isAccepted = for {
 			game <- knownGame

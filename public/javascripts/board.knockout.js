@@ -66,6 +66,7 @@ function MainViewModel(gameId, playerId) {
 			data.pieces.forEach(function(p) {				
 				self.pieces.push(new PieceViewModel(p, i++));
 			});
+			if(data.last.length > 0) $("#last").text("Last: " + data.last);
 			self.refreshCanSubmitMove();
 		});
 	}
