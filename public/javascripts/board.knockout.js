@@ -84,9 +84,11 @@ function MainViewModel(gameId, playerId) {
 		if(last.length > 0) self.updateStatus("Last: " + last, false);
 	}
 
-	self.updateOpponentLink = function(me, opponent) {
+	self.updateScore = function(me, opponent, standings) {
 		var link = window.location.pathname.replace(me, opponent);
 		$("#oplink").attr("href", link);
+		$("#my-score").text(standings.me);
+		$("#op-score").text(standings.opponent);
 	}
 
 	self.reload = function() {
@@ -103,7 +105,7 @@ function MainViewModel(gameId, playerId) {
 				self.resizeBoard(data.pieces);
 				self.addLastMove(data.last);
 				self.refreshCanSubmitMove();
-				self.updateOpponentLink(data.me, data.opponent);
+				self.updateScore(data.me, data.opponent, data.standings);
 			},
 			error: function(xhr, textStatus, errorThrown) {
 				self.updateStatus(xhr.responseText, true);

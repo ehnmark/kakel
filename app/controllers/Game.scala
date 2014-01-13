@@ -21,7 +21,7 @@ object Game extends Controller {
 
 	def index = Action {
 		import scala.util.Random
-		val boardSize = 4
+		val boardSize = 6
 
 		def charSelector = {
 			val r = new Random()
