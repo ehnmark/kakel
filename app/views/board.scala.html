@@ -35,19 +35,20 @@
 	</script>
 
 	<script type="text/javascript">
+		var wasClosed = false;
 		var events = new EventSource("@routes.Game.subscribeSSE(id, playerId)");
 		events.onopen = function() { 
 			console.log("SSE open");
+			if(wasClosed) viewModel.reload();
 		};
 
 		events.onerror = function(e) { 
-			console.log('SSE onerror: ' + e);
-			if(e.readyState == EventSource.CLOSED)
-				console.log("SSE connection closed!");
+			console.log("SSE onerror. State:" + e.readyState);
+			wasClosed = true;
 		};
 
 		events.onmessage = function(e) { 
-			console.log('SSE onmessage: ' + e.data);
+			console.log("SSE onmessage: " + e.data);
 			viewModel.reload();
 		};
 	</script>
