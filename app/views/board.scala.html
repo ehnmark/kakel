@@ -9,9 +9,6 @@
 	ul {
 		list-style-type: none;
 	}
-	ul.pieces {
-		width: 300px;
-	}
 	li {
 		display: inline;
 		float: left;
@@ -53,7 +50,7 @@
 	
 	<h1>All</h1>
 
-	<ul class="pieces" data-bind="foreach: pieces">
+	<ul id="board" data-bind="foreach: pieces">
 		<li>
 			<div data-bind="text: display, click: $root.toggleSelected, css: pieceStyle"></div>
 		</li>

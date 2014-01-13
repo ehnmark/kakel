@@ -56,17 +56,34 @@ function MainViewModel(gameId, playerId) {
 		});
 	}
 
+	self.resizeBoard = function(pieces) {
+		var count = pieces.length;
+		var columns = Math.sqrt(count);
+		var pieceWidth = $("li").first().outerWidth();
+		var width = columns * pieceWidth;
+		$("#board").width(width);
+	}
+
+	self.addPieces = function(pieces) {
+		var i = 0;
+		pieces.forEach(function(p) {				
+			self.pieces.push(new PieceViewModel(p, i++));
+		});
+	}
+
+	self.addLastMove = function(last) {
+		if(last.length > 0) $("#last").text("Last: " + last);
+	}
+
 	self.reload = function() {
 		self.pieces.removeAll();
 		self.selected.removeAll();
 
 		$.getJSON("/game/" + gameId + "/" + playerId, function(data) {
 			self.isMyTurn(data.isMyTurn);
-			i = 0;
-			data.pieces.forEach(function(p) {				
-				self.pieces.push(new PieceViewModel(p, i++));
-			});
-			if(data.last.length > 0) $("#last").text("Last: " + data.last);
+			self.addPieces(data.pieces);
+			self.resizeBoard(data.pieces);
+			self.addLastMove(data.last);
 			self.refreshCanSubmitMove();
 		});
 	}
