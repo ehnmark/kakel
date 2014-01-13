@@ -34,10 +34,10 @@ object JsonApiCodec {
 			"size"			-> game.board.size,
 			"me"			-> me.id,
 			"opponent"		-> op.id,
-			"isMyTurn"		-> isMyTurn,
+			"isMyTurn"		-> (isMyTurn && !state.isGameOver),
 			"last"			-> last,
 			"standings"		-> Json.obj(
-				"is-over"	-> state.isGameOver,
+				"isOver"	-> state.isGameOver,
 				"me"		-> myScore,
 				"opponent"	-> opScore
 			),

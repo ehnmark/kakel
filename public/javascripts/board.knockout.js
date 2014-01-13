@@ -11,12 +11,12 @@ function PieceViewModel(piece, idx) {
 function MainViewModel(gameId, playerId) {
 	var self = this;
 
-	self.isMyTurn = ko.observable(false);
 	self.gameId = gameId;
 	self.playerId = playerId;
 	self.pieces = ko.observableArray([]);
 	self.selected = ko.observableArray([]);
 
+	self.isMyTurn = ko.observable(false);
 	self.canSubmitMove = ko.observable(false);
 
 	self.refreshCanSubmitMove = function(p) {
@@ -89,6 +89,15 @@ function MainViewModel(gameId, playerId) {
 		$("#oplink").attr("href", link);
 		$("#my-score").text(standings.me);
 		$("#op-score").text(standings.opponent);
+		if(standings.isOver) {
+			if(standings.me > standings.opponent) {
+				self.updateStatus("You won!", false);
+			} else if(standings.me < standings.opponent) {
+				self.updateStatus("You lost! Boo", true);
+			} else {
+				self.updateStatus("It's a tie", false);
+			}
+		}
 	}
 
 	self.reload = function() {
@@ -108,7 +117,8 @@ function MainViewModel(gameId, playerId) {
 				self.updateScore(data.me, data.opponent, data.standings);
 			},
 			error: function(xhr, textStatus, errorThrown) {
-				self.updateStatus(xhr.responseText, true);
+				var error = xhr.responseText == undefined ? errorThrown : JSON.parse(xhr.responseText);
+				self.updateStatus(error, true);
 			}
 		});		
 	}
