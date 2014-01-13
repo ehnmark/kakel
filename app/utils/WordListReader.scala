@@ -8,7 +8,7 @@ import utils.Loans.using
 
 object WordListReader {
 
-	val linePattern = """.*\[(.*)\].*""".r
+	val linePattern = """.*\[(\p{InHiragana}*)\].*""".r
 
 	def getGzipReader(path: String, encoding: String) =
 		new BufferedReader(
