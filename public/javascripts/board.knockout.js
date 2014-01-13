@@ -36,6 +36,15 @@ function MainViewModel(gameId, playerId) {
 		}
 	}
 
+	self.updateStatus = function(message, isError) {
+		$("#status").text(message);
+		if(isError) {
+			$("#status").color_fade({from:'red',to:'white'});
+		} else {
+			$("#status").color_fade();			
+		}
+	}
+
 	self.submitMove = function() {
 		var data = JSON.stringify(
 			ko.utils.arrayMap(
@@ -48,10 +57,10 @@ function MainViewModel(gameId, playerId) {
 			data: data,
 			contentType: "application/json; charset=utf-8",
 			success: function(data, textStatus, xhr) {
-				$("#message").text(xhr.responseText);
+				self.updateStatus(xhr.responseText, false);
 			},
 			error: function(xhr, textStatus, errorThrown) {
-				$("#message").text(xhr.responseText);
+				self.updateStatus(xhr.responseText, true);
 			}
 		});
 	}
@@ -72,7 +81,7 @@ function MainViewModel(gameId, playerId) {
 	}
 
 	self.addLastMove = function(last) {
-		if(last.length > 0) $("#last").text("Last: " + last);
+		if(last.length > 0) self.updateStatus("Last: " + last, false);
 	}
 
 	self.updateOpponentLink = function(me, opponent) {
@@ -84,14 +93,22 @@ function MainViewModel(gameId, playerId) {
 		self.pieces.removeAll();
 		self.selected.removeAll();
 
-		$.getJSON("/game/" + gameId + "/" + playerId, function(data) {
-			self.isMyTurn(data.isMyTurn);
-			self.addPieces(data.pieces);
-			self.resizeBoard(data.pieces);
-			self.addLastMove(data.last);
-			self.refreshCanSubmitMove();
-			self.updateOpponentLink(data.me, data.opponent);
-		});
+		$.ajax({
+			url: "/game/" + gameId + "/" + playerId,
+			type: "GET",
+			contentType: "application/json; charset=utf-8",
+			success: function(data, textStatus, xhr) {
+				self.isMyTurn(data.isMyTurn);
+				self.addPieces(data.pieces);
+				self.resizeBoard(data.pieces);
+				self.addLastMove(data.last);
+				self.refreshCanSubmitMove();
+				self.updateOpponentLink(data.me, data.opponent);
+			},
+			error: function(xhr, textStatus, errorThrown) {
+				self.updateStatus(xhr.responseText, true);
+			}
+		});		
 	}
 }
 

@@ -1,9 +1,9 @@
 @(id: Long, playerId: String)(implicit request: RequestHeader)
 
 @main("Game %d (%s)".format(id, playerId)) {
-
-	<p class="lead"><a id="oplink" href="">Opponent link</a></p>
 	
+	<p class="lead" id="status"></p>
+
 	<hr class="clear: left"/>
 
 	<ul id="board" data-bind="foreach: pieces">
@@ -24,9 +24,8 @@
 
 	<button class="btn btn-primary" data-bind="click: submitMove, enabled: canSubmitMove, visible: isMyTurn">Submit move</button>
 
-	<h3 id="last"></h3>
+	<h6><a id="oplink" href="">Opponent link</a></h6>
 
-	<p class="lead" id="message"></p>
 
 	<script src="@routes.Assets.at("javascripts/board.knockout.js")" type="text/javascript"></script>
 	<script>
