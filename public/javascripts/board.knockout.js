@@ -75,6 +75,11 @@ function MainViewModel(gameId, playerId) {
 		if(last.length > 0) $("#last").text("Last: " + last);
 	}
 
+	self.updateOpponentLink = function(me, opponent) {
+		var link = window.location.pathname.replace(me, opponent);
+		$("#oplink").attr("href", link);
+	}
+
 	self.reload = function() {
 		self.pieces.removeAll();
 		self.selected.removeAll();
@@ -85,6 +90,7 @@ function MainViewModel(gameId, playerId) {
 			self.resizeBoard(data.pieces);
 			self.addLastMove(data.last);
 			self.refreshCanSubmitMove();
+			self.updateOpponentLink(data.me, data.opponent);
 		});
 	}
 }

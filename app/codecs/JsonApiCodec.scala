@@ -17,6 +17,8 @@ object JsonApiCodec {
 		}
 
 		val (playerOne, playerTwo) = game.players
+		val me = if(playerId == playerOne.id) playerOne else playerTwo
+		val opponent = if(playerId == playerOne.id) playerTwo else playerOne
 		val numMoves = game.moves.size
 		val isMyTurn = playerId match {
 			case playerOne.id => numMoves % 2 == 0
@@ -26,6 +28,8 @@ object JsonApiCodec {
 		val last = if(numMoves == 0) "" else game.moves.head.pieces.map { p => p.display }.mkString
 		Json.obj(
 			"size"			-> game.board.size,
+			"me"			-> me.id,
+			"opponent"		-> opponent.id,
 			"isMyTurn"		-> isMyTurn,
 			"last"			-> last,
 			"pieces"		-> game.getStates.map { case (p, s) => 
