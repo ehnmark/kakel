@@ -35,18 +35,18 @@
 	</script>
 
 	<script type="text/javascript">
-		var connection = new WebSocket('@routes.Game.subscribeWS(id, playerId).webSocketURL()');
-		connection.onopen = function () {
-			console.log("WS onopen");
-		};
+		var events = new EventSource("@routes.Game.subscribeSSE(id, playerId)");
+		events.addEventListener('open', function() { 
+			console.log("SSE open");
+		});
 
-		connection.onerror = function (error) {
-			console.log('WS onerror: ' + error);
-		};
+		events.addEventListener('error', function(e) { 
+			console.log('SSE onerror: ' + e);
+		});
 
-		connection.onmessage = function (e) {
-			console.log('WS onmessage: ' + e.data);
+		events.addEventListener('message', function(e) { 
+			console.log('SSE onmessage: ' + e.data);
 			viewModel.reload();
-		};
+		});
 	</script>
 }

@@ -1,11 +1,12 @@
 package controllers
 
 import play.Logger
-import play.api.mvc.{Controller, Action, WebSocket}
+import play.api.mvc.{Controller, Action}
 import play.api.libs.json.Json.toJson
 import play.api.libs.iteratee.Enumerator
 import play.api.libs.iteratee.{Iteratee, Concurrent}
 import play.api.libs.concurrent.Execution.Implicits._
+import play.api.libs.EventSource
 
 import utils.{Result, Failure, Success, WordListReader}
 
@@ -79,15 +80,14 @@ object Game extends Controller {
 		}
 	}
 
-	def subscribeWS(id: Long, playerId: String) = WebSocket.using[String] { request => 
-		val in = Iteratee.consume[String]()
-		val obs = persistence.Repository.updatesOn(id)
-		val out = Concurrent.unicast[String](channel =>
-			obs.subscribe(g => {
-				Logger.error(s"SUB WS update: $g")
+	def subscribeSSE(id: Long, playerId: String) = Action {
+		val updates = persistence.Repository.updatesOn(id)
+		val enumerator = Concurrent.unicast[String](channel =>
+			updates.subscribe(g => {
+				Logger.error(s"SSE update: $g")
 				channel.push(g.id.toString)
 			})
 		)
-		(in, out)
+		Ok.stream(enumerator &> EventSource()).as( "text/event-stream")
 	}
 }
