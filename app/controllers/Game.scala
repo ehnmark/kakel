@@ -8,6 +8,9 @@ import play.api.libs.iteratee.{Iteratee, Concurrent}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.EventSource
 
+import rx.lang.scala.Observable
+import scala.concurrent.duration._
+
 import utils.{Result, Failure, Success, WordListReader}
 
 object Game extends Controller {
@@ -22,7 +25,7 @@ object Game extends Controller {
 
 	def index = Action {
 		import scala.util.Random
-		val boardSize = 6
+		val boardSize = 5
 
 		def charSelector = {
 			val r = new Random()
@@ -82,12 +85,16 @@ object Game extends Controller {
 
 	def subscribeSSE(id: Long, playerId: String) = Action {
 		val updates = persistence.Repository.updatesOn(id)
+		// Heroku kills the connection after 50 seconds of no traffic. 
+		// We don't want that to happen, so we stuff the pipe with noops
+		val noops = Observable.interval(30 seconds) map { x => "noop" }
+		val updatesWithNoops = updates map { x => "update" } merge noops
 		val enumerator = Concurrent.unicast[String](channel =>
-			updates.subscribe(g => {
-				Logger.error(s"SSE update: $g")
-				channel.push(g.id.toString)
+			updatesWithNoops.subscribe(msg => {
+				Logger.error(s"SSE update: $msg")
+				channel.push(msg)
 			})
 		)
-		Ok.stream(enumerator &> EventSource()).as( "text/event-stream")
+		Ok.stream(enumerator &> EventSource()).as("text/event-stream")
 	}
 }
