@@ -8,7 +8,7 @@ import play.api.libs.iteratee.{Iteratee, Concurrent}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.EventSource
 
-import rx.lang.scala.Observable
+import rx.lang.scala.{Observable, Subscription}
 import scala.concurrent.duration._
 
 import utils.{Result, Failure, Success, WordListReader}
@@ -89,12 +89,13 @@ object Game extends Controller {
 		// We don't want that to happen, so we stuff the pipe with noops
 		val noops = Observable.interval(30 seconds) map { x => "noop" }
 		val updatesWithNoops = updates map { x => "update" } merge noops
+		var subscription: Subscription = null // Don't shoot me
 		val enumerator = Concurrent.unicast[String](channel =>
-			updatesWithNoops.subscribe(msg => {
-				Logger.error(s"SSE update: $msg")
+			subscription = updatesWithNoops.subscribe(msg => {
 				channel.push(msg)
-			})
-		)
+			}),
+		subscription.unsubscribe(),
+		(msg, ignore) => Logger.error(s"On error: $msg"))
 		Ok.stream(enumerator &> EventSource()).as("text/event-stream")
 	}
 }

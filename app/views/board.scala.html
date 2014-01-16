@@ -48,5 +48,9 @@
 			console.log("SSE onmessage: " + e.data);
 			if(e.data!="'noop'") viewModel.reload();
 		};
+
+		$(window).on("beforeunload", function() {
+			events.close();
+		});
 	</script>
 }
