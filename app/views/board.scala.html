@@ -11,16 +11,16 @@
 
 	<hr class="clear: left"/>
 
-	<ul id="board" data-bind="foreach: pieces">
-		<li>
+	<ul class="pieces" id="board" data-bind="foreach: pieces">
+		<li class="piece">
 			<div data-bind="text: display, click: $root.toggleSelected, css: pieceStyle"></div>
 		</li>
 	</ul>
 
 	<hr/>
 
-	<ul data-bind="foreach: selected">
-		<li>
+	<ul class="pieces" data-bind="foreach: selected">
+		<li class="piece">
 			<div data-bind="text: display, click: $root.toggleSelected, css: pieceStyle"></div>
 		</li>
 	</ul>
