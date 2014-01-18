@@ -6,6 +6,7 @@
 
 # Game
 GET		/						controllers.Game.index
+GET		/create					controllers.Game.create
 GET		/game/:id/:playerId		controllers.Game.data(id: Long, playerId: String)
 GET		/board/:id/:playerId	controllers.Game.board(id: Long, playerId: String)
 POST	/move/:id/:playerId 	controllers.Game.move(id: Long, playerId: String)

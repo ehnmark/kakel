@@ -24,6 +24,10 @@ object Game extends Controller {
 	}
 
 	def index = Action {
+		Ok(views.html.index())
+	}
+
+	def create = Action {
 		import scala.util.Random
 		val boardSize = 5
 
