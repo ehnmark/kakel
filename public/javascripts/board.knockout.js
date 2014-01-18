@@ -26,6 +26,8 @@ function MainViewModel(gameId, playerId) {
 	self.toggleSelected = function(p) {
 		if(!self.isMyTurn()) {
 			console.log("Not my turn; cannot toggle");
+		} else if(p.state == 2) {
+			console.log("Can't use pieces taken by opponent");
 		} else {
 			if(self.selected.indexOf(p) < 0)
 				self.selected.push(p);
