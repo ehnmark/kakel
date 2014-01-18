@@ -67,15 +67,16 @@ object Game extends Controller {
 			case JsSuccess(value, path) => Success(value)
 			case _ => Failure("Missing pieces to move")
 		}
-		def knownWord(game: models.Game, ids: List[Int]) = {
+		def knownAndUnusedWord(game: models.Game, ids: List[Int]) = {
 			val word = game.getWord(ids)
-			if (words.contains(word)) Success(word)
-			else Failure(s"'$word' not recognized")
+			if (game.isUsed(word)) Failure(s"'$word' has already been used")
+			else if (! words.contains(word)) Failure(s"'$word' not recognized")
+			else Success(word)
 		}
 		def isAccepted = for {
 			game <- knownGame
 			ids <- validInput
-			word <- knownWord(game, ids)
+			word <- knownAndUnusedWord(game, ids)
 		} yield (game, ids)
 
 		isAccepted match {

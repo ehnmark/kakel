@@ -15,16 +15,19 @@ object Repository {
 
 	def updatesOn(id: Long) = updates.filter { g => g.id == id }
 
-	def all = {
-		DB.withConnection { implicit conn =>
+	def all = DB.withConnection { implicit conn =>
 			SQL("""select json from game""")().map { row =>
 				val json = row[String]("json")
 				JsonCodec.fromJson(json)
 			} map { game => (game.id, game) } toMap
 		}
-	}
 
-	def find(id: Long) = all.get(id)
+	def find(id: Long) = DB.withConnection { implicit conn =>
+			SQL("select json from game where id = {id}").on("id" -> id)().map { row =>
+				val json = row[String]("json")
+				JsonCodec.fromJson(json)
+			}.headOption
+		}
 
 	def move(game: Game, pieceIds: List[Int]) = {
 		val pieces = game.getPieces(pieceIds)

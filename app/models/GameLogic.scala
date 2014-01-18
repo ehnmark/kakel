@@ -49,6 +49,8 @@ case class Game(id: Long, players: (Player, Player), board: Board, moves: List[M
 		getPieces(pieceIds) map { p => p.display } mkString
 	}
 
+	def isUsed(word: String) = moves exists { m => m.toString == word }
+
 	def getStates = {
 		val initial: Map[Piece, PieceState] = board.pieces map { case (idx, piece) => piece -> Neutral }
 		moves.reverse.zipWithIndex.foldLeft(initial) { case (acc, (move, index)) => {
